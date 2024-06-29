@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>로그인 및 회원가입</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #000000;
+        margin: 0;
+        padding: 0;
+        color: #ffffff;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+      }
+      #title {
+        font-size: 24px;
+        font-weight: bold;
+        color: #ff0000;
+        margin: 20px auto;
+        text-align: center;
+      }
+      form {
+        background-color: #666666;
+        padding: 40px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        width: 300px;
+        margin: 20px auto;
+      }
+      h2 {
+        text-align: left;
+        margin-bottom: 20px;
+      }
+      input[type="text"],
+      input[type="password"],
+      input[type="number"] {
+        width: calc(100% - 20px);
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 0.5px solid #cccccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        background-color: #666666;
+      }
+      input[type="submit"] {
+        width: calc(100% - 20px);
+        padding: 10px;
+        border: none;
+        border-radius: 4px;
+        box-sizing: border-box;
+        background-color: #ff0000;
+        color: #fff;
+        cursor: pointer;
+      }
+      p {
+        margin: 0;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="title">NETFLIX 줄거리 검색 서비스</div>
+    <form id="loginForm" method="post" style="display: none">
+      <h2>로그인</h2>
+      <input
+        type="text"
+        id="loginUsername"
+        name="loginUsername"
+        placeholder="아이디"
+        required
+      />
+      <input
+        type="password"
+        id="loginPassword"
+        name="loginPassword"
+        placeholder="비밀번호"
+        required
+      />
+      <input type="submit" value="로그인" />
+      <p>
+        아직 회원이 아니신가요?
+        <a href="#" class="toggleForm" style="color: #ffffff">회원가입</a>
+      </p>
+      {% if login_error %}
+      <p style="color: red">{{ login_error }}</p>
+      {% endif %}
+    </form>
+
+    <form id="signupForm" method="post" style="display: none">
+      <h2>회원가입</h2>
+      <input
+        type="text"
+        id="signupUsername"
+        name="signupUsername"
+        placeholder="아이디"
+        required
+      />
+      <input
+        type="number"
+        id="age"
+        name="age"
+        placeholder="나이"
+        min="1"
+        required
+      />
+      <input
+        type="password"
+        id="signupPassword"
+        name="signupPassword"
+        placeholder="비밀번호"
+        required
+      />
+      <input
+        type="password"
+        id="confirmPassword"
+        name="confirmPassword"
+        placeholder="비밀번호 확인"
+        required
+      />
+      <input type="submit" value="가입" />
+      <p>
+        이미 회원이신가요?
+        <a href="#" class="toggleForm" style="color: #ffffff">로그인</a>
+      </p>
+      {% if signup_error %}
+      <p style="color: red">{{ signup_error }}</p>
+      {% endif %}
+    </form>
+
+    <script>
+      document.querySelectorAll(".toggleForm").forEach(function(el) {
+          el.addEventListener("click", function(event) {
+              event.preventDefault();
+              var loginForm = document.getElementById("loginForm");
+              var signupForm = document.getElementById("signupForm");
+
+              if (loginForm.style.display === "none") {
+                  loginForm.style.display = "block";
+                  signupForm.style.display = "none";
+              } else {
+                  loginForm.style.display = "none";
+                  signupForm.style.display = "block";
+              }
+          });
+      });
+
+      // Show the appropriate form based on server response
+      window.onload = function() {
+          if ({{ show_signup_form | tojson }}) {
+              document.getElementById("signupForm").style.display = "block";
+              document.getElementById("loginForm").style.display = "none";
+          } else {
+              document.getElementById("signupForm").style.display = "none";
+              document.getElementById("loginForm").style.display = "block";
+          }
+      };
+
+      document.getElementById("signupForm").addEventListener("submit", function(event) {
+          var ageInput = document.getElementById("age");
+          if (ageInput.value < 1) {
+              event.preventDefault();
+              alert("나이는 1 이상의 양수여야 합니다.");
+          }
+          if (ageInput.value > 999){
+              event.preventDefault();
+              alert("나이 값을 확인해주세요.");
+          }
+      });
+    </script>
+  </body>
+</html>

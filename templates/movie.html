@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ movie['title'] }}</title>
+    <style>
+      body {
+        background-color: #141414;
+        color: #ffffff;
+        font-family: Arial, sans-serif;
+      }
+      .container {
+        padding: 20px;
+        display: flex;
+        justify-content: space-between;
+      }
+      .movie {
+        width: 400px;
+        height: 600px;
+        background-color: #333;
+        border-radius: 5px;
+        margin-left: 20px;
+        margin-right: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .movie img {
+        max-width: 100%;
+        max-height: 100%;
+        border-radius: 5px;
+      }
+      .movie-info {
+        flex: 1;
+        padding: 10px;
+        margin-left: 20px;
+      }
+      .back-btn {
+        padding: 10px 20px;
+        border-radius: 5px;
+        border: none;
+        background-color: #e50914;
+        color: #fff;
+        cursor: pointer;
+        margin: 20px;
+      }
+      .heart-button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        fill: white;
+        margin-left: 10px;
+        margin-bottom: 10px;
+        width: 40px;
+        height: 40px;
+      }
+      .heart-button svg {
+        width: 50px;
+        height: 50px;
+      }
+      .heart-button.active svg {
+        fill: red;
+      }
+      h2 {
+        text-align: left;
+        margin-bottom: 10px;
+        font-size: 35px;
+        display: flex;
+        align-items: center;
+      }
+      p {
+        font-size: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <button class="back-btn" onclick="location.href='{{ url_for('back') }}'">
+      Home
+    </button>
+    <div class="container">
+      <div class="movie">
+        <img
+          src="https://www.bing.com/search?q=movie_poster"
+          alt="Movie Poster"
+        />
+      </div>
+      <div class="movie-info">
+        <h2>
+          {{ movie['title'] }}
+          <button
+            class="heart-button {% if is_liked %}active{% endif %}"
+            id="likeButton"
+            data-title="{{ movie['title'] }}"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path
+                d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41 0.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+              />
+            </svg>
+          </button>
+        </h2>
+        <p><strong>Rating:</strong> {{ movie['rating'] }}</p>
+        <p><strong>Director:</strong> {{ movie['director'] }}</p>
+        <p><strong>Cast:</strong> {{ movie['cast'] }}</p>
+        <p><strong>Country:</strong> {{ movie['country'] }}</p>
+        <p><strong>Release Year:</strong> {{ movie['release_year'] }}</p>
+        <p><strong>Listed In:</strong> {{ movie['listed_in'] }}</p>
+        <p>{{ movie['description'] }}</p>
+      </div>
+    </div>
+    <script>
+      document
+        .getElementById("likeButton")
+        .addEventListener("click", function () {
+          this.classList.toggle("active");
+          const title = this.getAttribute("data-title");
+          const isLiked = this.classList.contains("active");
+
+          fetch("/toggle_like", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              title: title,
+              is_liked: isLiked,
+            }),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.success) {
+                console.log("Likelist updated successfully");
+              } else {
+                console.error("Failed to update likelist");
+              }
+            });
+        });
+    </script>
+  </body>
+</html>

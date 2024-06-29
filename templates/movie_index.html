@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NETFLIX 줄거리 검색 서비스</title>
+    <style>
+      body {
+        background-color: #141414;
+        color: #ffffff;
+        font-family: Arial, sans-serif;
+      }
+      .container {
+        text-align: center;
+        padding: 20px;
+      }
+      .search-bar {
+        margin-bottom: 20px;
+      }
+      .search-bar input {
+        padding: 10px;
+        width: 300px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        margin-right: 10px;
+      }
+      .search-bar button {
+        padding: 10px 20px;
+        border-radius: 5px;
+        border: none;
+        background-color: #e50914;
+        color: #fff;
+        cursor: pointer;
+      }
+      .movie-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 20px;
+      }
+      .movie {
+        background-color: #333;
+        border-radius: 5px;
+        padding: 10px;
+        text-align: center;
+        height: 250px; /* 일정한 높이 설정 */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        cursor: pointer;
+      }
+      .movie.liked {
+        background-color: #fff;
+        color: #000;
+      }
+      .movie h2 {
+        font-size: 24px; /* 제목 크기를 키움 */
+        color: #fff;
+      }
+      .movie.liked h2 {
+        color: #000;
+      }
+      .movie p {
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>NETFLIX 줄거리 검색 서비스</h1>
+      <div class="search-bar">
+        <form method="post" action="{{ url_for('movie_index') }}">
+          <input
+            type="text"
+            name="keyword"
+            placeholder="영화 키워드 입력"
+            value="{{ session.get('keyword', '') }}"
+          />
+          <button type="submit">검색</button>
+          <button
+            type="button"
+            onclick="location.href='{{ url_for('my_list') }}'"
+          >
+            My List
+          </button>
+        </form>
+      </div>
+      {% if recommendations.empty %}
+      <p>입력한 키워드에 해당하는 영화가 없습니다.</p>
+      {% else %}
+      <div class="movie-grid">
+        {% for idx, movie in recommendations.iterrows() %}
+        <div
+          class="movie {% if movie['title'] in user_likelist %}liked{% endif %}"
+          onclick="location.href='{{ url_for('movie', title=movie['title']) }}'"
+        >
+          <h2>{{ movie['title']|safe }}</h2>
+          <p>{{ movie['description']|safe }}</p>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+  </body>
+</html>
